@@ -26,7 +26,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     gamma = np.exp(np.log(0.5) / (fps * half_life_seconds))  # Quick mafs
     agents_per_match = 2
     num_instances = 1
-    target_steps = 100_000
+    target_steps = 500_000
     steps = target_steps // (num_instances * agents_per_match)
     batch_size = steps
 
