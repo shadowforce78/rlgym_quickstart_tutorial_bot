@@ -98,7 +98,8 @@ if __name__ == '__main__':  # Required for multiprocessing
     atexit.register(exit_save, model)
     try:
         while True:
-            model.learn(25_000_000, callback=callback)
+            #need to reset timesteps when you're running a different number of instances than when you saved the model
+            model.learn(25_000_000, callback=callback, reset_num_timesteps=False) 
             model.save("models/exit_save")
             model.save(f"mmr_models/{model.num_timesteps}")
     except Exception as e:
