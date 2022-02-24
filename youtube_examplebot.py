@@ -51,7 +51,7 @@ if __name__ == '__main__':  # Required for multiprocessing
             ),
             (0.1, 1.0, 1.0)),
             self_play=True,
-            terminal_conditions=[TimeoutCondition(fps * 300), NoTouchTimeoutCondition(fps * 20), GoalScoredCondition()],
+            terminal_conditions=[TimeoutCondition(fps * 300), NoTouchTimeoutCondition(fps * 45), GoalScoredCondition()],
             obs_builder=AdvancedObs(),  # Not that advanced, good default
             state_setter=DefaultState(),  # Resets to kickoff position
             action_parser=DiscreteAction()  # Discrete > Continuous don't @ me
