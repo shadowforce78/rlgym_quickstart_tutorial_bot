@@ -66,7 +66,8 @@ if __name__ == '__main__':  # Required for multiprocessing
         model = PPO.load(
             "models/exit_save.zip",
             env,
-            device="auto"  # Need to set device again (if using a specific one)
+            device="auto",
+            custom_objects={"n_envs": env.num_envs}) #automatically adjusts to users changing instance count
         )
     except:
         from torch.nn import Tanh
