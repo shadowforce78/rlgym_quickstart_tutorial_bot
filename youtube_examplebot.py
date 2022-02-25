@@ -67,7 +67,7 @@ if __name__ == '__main__':  # Required for multiprocessing
             "models/exit_save.zip",
             env,
             device="auto",
-            custom_objects={"n_envs": env.num_envs}) #automatically adjusts to users changing instance count
+            custom_objects={"n_envs": env.num_envs}, #automatically adjusts to users changing instance count
         )
     except:
         from torch.nn import Tanh
