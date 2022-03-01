@@ -15,8 +15,6 @@ from rlgym.utils.reward_functions.common_rewards.player_ball_rewards import Velo
 from rlgym.utils.reward_functions.common_rewards.ball_goal_rewards import VelocityBallToGoalReward
 from rlgym.utils.reward_functions import CombinedReward
 
-import atexit
-
 
 if __name__ == '__main__':  # Required for multiprocessing
     frame_skip = 8          # Number of ticks to repeat an action
@@ -26,9 +24,11 @@ if __name__ == '__main__':  # Required for multiprocessing
     gamma = np.exp(np.log(0.5) / (fps * half_life_seconds))  # Quick mafs
     agents_per_match = 2
     num_instances = 1
-    target_steps = 500_000
-    steps = target_steps // (num_instances * agents_per_match)
-    batch_size = steps
+    target_steps = 1_000_000
+    steps = target_steps // (num_instances * agents_per_match) #making sure the experience counts line up properly
+    batch_size = steps//10 #getting the batch size down to something more manageable - 100k in this case
+    training_interval = 25_000_000
+    mmr_save_frequency = 50_000_000
 
     def exit_save(model):
         model.save("models/exit_save")
@@ -67,9 +67,11 @@ if __name__ == '__main__':  # Required for multiprocessing
             "models/exit_save.zip",
             env,
             device="auto",
-            custom_objects={"n_envs": env.num_envs}, #automatically adjusts to users changing instance count
+            custom_objects={"n_envs": env.num_envs}, #automatically adjusts to users changing instance count, may encounter shaping error otherwise
         )
+        print("Loaded previous exit save.")
     except:
+        print("No saved model found, creating new model.")
         from torch.nn import Tanh
         policy_kwargs = dict(
             activation_fn=Tanh,
@@ -96,12 +98,20 @@ if __name__ == '__main__':  # Required for multiprocessing
     # Divide by num_envs (number of agents) because callback only increments every time all agents have taken a step
     # This saves to specified folder with a specified name
     callback = CheckpointCallback(round(5_000_000 / env.num_envs), save_path="models", name_prefix="rl_model")
-    atexit.register(exit_save, model)
+
     try:
+        mmr_model_target_count = model.num_timesteps + mmr_save_frequency
         while True:
-            #need to reset timesteps when you're running a different number of instances than when you saved the model
-            model.learn(25_000_000, callback=callback, reset_num_timesteps=False) 
+            #may need to reset timesteps when you're running a different number of instances than when you saved the model
+            model.learn(training_interval, callback=callback, reset_num_timesteps=False) #can ignore callback if training_interval < callback target
             model.save("models/exit_save")
-            model.save(f"mmr_models/{model.num_timesteps}")
-    except Exception as e:
-        print(e)
+            if model.num_timesteps >= mmr_model_target_count:
+                model.save(f"mmr_models/{model.num_timesteps}")
+                mmr_model_target_count += mmr_save_frequency
+
+    except KeyboardInterrupt:
+        print("Exiting training")
+
+    print("Saving model")
+    exit_save(model)
+    print("Save complete")
