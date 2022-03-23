@@ -68,6 +68,8 @@ if __name__ == '__main__':  # Required for multiprocessing
             env,
             device="auto",
             custom_objects={"n_envs": env.num_envs}, #automatically adjusts to users changing instance count, may encounter shaping error otherwise
+            """If you need to adjust parameters mid training, you can use the below example as a guide"""
+            #custom_objects={"n_envs": env.num_envs, "n_steps": steps, "batch_size": batch_size, "n_epochs": 10, "learning_rate": 5e-5}
         )
         print("Loaded previous exit save.")
     except:
