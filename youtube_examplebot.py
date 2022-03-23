@@ -26,7 +26,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     num_instances = 1
     target_steps = 1_000_000
     steps = target_steps // (num_instances * agents_per_match) #making sure the experience counts line up properly
-    batch_size = steps//10 #getting the batch size down to something more manageable - 100k in this case
+    batch_size = target_steps//10 #getting the batch size down to something more manageable - 100k in this case
     training_interval = 25_000_000
     mmr_save_frequency = 50_000_000
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':  # Required for multiprocessing
         model = PPO(
             MlpPolicy,
             env,
-            n_epochs=1,                 # PPO calls for multiple epochs
+            n_epochs=10,                 # PPO calls for multiple epochs
             policy_kwargs=policy_kwargs,
             learning_rate=5e-5,          # Around this is fairly common for PPO
             ent_coef=0.01,               # From PPO Atari
