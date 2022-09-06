@@ -50,7 +50,8 @@ if __name__ == '__main__':  # Required for multiprocessing
                 ),
             ),
             (0.1, 1.0, 1.0)),
-            # self_play=True,  in rlgym 1.2 'self_play' is depreciated. Uncomment line if using an earlier version
+            # self_play=True,  in rlgym 1.2 'self_play' is depreciated. Uncomment line if using an earlier version and comment out spawn_opponents
+            spawn_opponents=True,
             terminal_conditions=[TimeoutCondition(fps * 300), NoTouchTimeoutCondition(fps * 45), GoalScoredCondition()],
             obs_builder=AdvancedObs(),  # Not that advanced, good default
             state_setter=DefaultState(),  # Resets to kickoff position
