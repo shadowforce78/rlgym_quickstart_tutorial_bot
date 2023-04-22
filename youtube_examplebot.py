@@ -78,7 +78,7 @@ if __name__ == '__main__':  # Required for multiprocessing
         from torch.nn import Tanh
         policy_kwargs = dict(
             activation_fn=Tanh,
-            net_arch=[512, 512, dict(pi=[256, 256, 256], vf=[256, 256, 256])],
+            net_arch=[dict(pi=[512, 256, 256, 256], vf=[1024, 512, 256, 256, 256])],
         )
 
         model = PPO(
